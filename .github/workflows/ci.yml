@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получение исходного кода
+        uses: actions/checkout@v6
+
+      - name: Подготовка окружения
+        run: cp .env.example .env
+
+      - name: Запуск сервисов
+        run: docker compose up --build -d --wait
+
+      - name: Запуск тестов
+        run: docker compose exec -T backend pdm run python manage.py test
+
+      - name: Проверка OpenAPI-схемы
+        run: docker compose exec -T backend pdm run python manage.py spectacular --validate --file /tmp/schema.yaml
+        
+      - name: Вывод логов при ошибке
+        if: failure()
+        run: docker compose logs
+
+      - name: Остановка сервисов
+        if: always()
+        run: docker compose down -v
