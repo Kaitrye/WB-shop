@@ -19,7 +19,15 @@ from django.urls import path
 
 from app.views import health
 
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from app.views import MeView, RegisterView, health
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('health', health)
+    path('health', health, name="health"),
+    path("register", RegisterView.as_view(), name="register"),
+    path("login", TokenObtainPairView.as_view(), name="login"),
+    path("refresh", TokenRefreshView.as_view(), name="refresh"),
+    path("me", MeView.as_view(), name="me"),
 ]
