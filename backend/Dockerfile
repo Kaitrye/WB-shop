@@ -4,7 +4,10 @@ WORKDIR /app
 
 COPY pyproject.toml pdm.lock ./
 
-RUN pip install pdm --no-cache-dir
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl \
+    && curl -sSL https://pdm-project.org/install-pdm.py | python3 - -v 2.28.0 -p /usr/local \
+    && rm -rf /var/lib/apt/lists/*
 RUN pdm sync --prod
 
 COPY . .

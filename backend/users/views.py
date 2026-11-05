@@ -4,7 +4,7 @@ from django.http import HttpRequest, JsonResponse
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from app.serializers import RegisterSerializer, UserSerializer
+from users.serializers import RegisterSerializer, UserSerializer
 
 def health(request: HttpRequest) -> JsonResponse:
     return JsonResponse({"status": "ok"})
