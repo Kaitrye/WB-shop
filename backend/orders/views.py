@@ -1,0 +1,50 @@
+from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.response import Response
+
+
+from orders.services import create_order_from_cart
+from orders.serializers import CreateOrderSerializer, OrderSerializer
+from orders.models import Order
+
+
+class OrderListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = CreateOrderSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        order = create_order_from_cart(
+            user=request.user,
+            cart_item_ids=serializer.validated_data["cart_item_ids"],
+        )
+
+        response_serializer = OrderSerializer(order)
+
+        return Response(
+            response_serializer.data, 
+            status=status.HTTP_201_CREATED,
+        )
+
+    def get(self, request):
+        orders = (
+            Order.objects.filter(user=request.user)
+            .prefetch_related("items__product")
+            .order_by("-created_at")
+        )
+
+        return Response(OrderSerializer(orders, many=True).data)
+
+
+class OrderDetailView(generics.RetrieveAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Order.objects.filter(user=self.request.user)
+            .prefetch_related("items__product")
+        )
