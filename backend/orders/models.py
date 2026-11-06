@@ -4,7 +4,8 @@ from django.conf import settings
 
 class Order(models.Model):
     class Status(models.TextChoices):
-        CREATED = "created", "Created"
+        CREATED = "created", "Создан",
+        PAID = "paid", "Оплачен"
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
