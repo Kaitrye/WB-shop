@@ -1,8 +1,13 @@
+import logging
+
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAdminUser
 
 from products.models import Product
 from products.serializers import ProductSerializer
+
+
+logger = logging.getLogger("shop")
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
@@ -17,6 +22,14 @@ class ProductListCreateView(generics.ListCreateAPIView):
 
         return [AllowAny()]
 
+    def perform_create(self, serializer):
+        product = serializer.save()
+        logger.info(
+            "event=product_created product_id=%s admin_id=%s",
+            product.pk,
+            self.request.user.pk,
+        )
+
 
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
@@ -30,8 +43,19 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         return [AllowAny()]
 
+    def perform_update(self, serializer):
+        product = serializer.save()
+        logger.info(
+            "event=product_updated product_id=%s admin_id=%s",
+            product.pk,
+            self.request.user.pk,
+        )
+
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save(update_fields=["is_active", "updated_at"])
-
-
+        logger.info(
+            "event=product_deactivated product_id=%s admin_id=%s",
+            instance.pk,
+            self.request.user.pk,
+        )
