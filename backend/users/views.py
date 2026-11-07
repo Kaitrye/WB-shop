@@ -1,11 +1,11 @@
 import logging
 
 from django.http import HttpRequest, JsonResponse
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.serializers import RegisterSerializer, UserSerializer
-
 
 logger = logging.getLogger("shop")
 
@@ -14,11 +14,12 @@ def health(request: HttpRequest) -> JsonResponse:
     return JsonResponse({"status": "ok"})
 
 
+@extend_schema(auth=[])
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: RegisterSerializer) -> None:
         user = serializer.save()
         logger.info("event=user_registered user_id=%s", user.pk)
 

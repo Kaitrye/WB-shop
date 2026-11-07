@@ -14,6 +14,8 @@ from cart.serializers import (
     UpdateCartItemSerializer,
 )
 
+from drf_spectacular.utils import extend_schema
+
 
 logger = logging.getLogger("shop")
 
@@ -21,6 +23,14 @@ logger = logging.getLogger("shop")
 class CartItemCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=AddCartItemSerializer,
+        responses={
+            200: CartItemSerializer,
+            201: CartItemSerializer,
+        },
+        operation_id="cart_item_add",
+    )
     def post(self, request):
         cart, _ = Cart.objects.get_or_create(user=request.user)
 

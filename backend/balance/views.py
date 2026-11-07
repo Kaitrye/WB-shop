@@ -11,6 +11,8 @@ from balance.serializers import (
 from balance.models import Balance
 from balance.services import top_up_balance
 
+from drf_spectacular.utils import extend_schema
+
 
 class BalanceView(generics.RetrieveAPIView):
     serializer_class = BalanceSerializer
@@ -24,6 +26,11 @@ class BalanceView(generics.RetrieveAPIView):
 class BalanceTopUpView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=TopUpBalanceSerializer,
+        responses={200: BalanceSerializer},
+        operation_id="balance_top_up",
+    )
     def post(self, request):
         serializer = TopUpBalanceSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

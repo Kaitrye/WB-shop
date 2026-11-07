@@ -1,5 +1,6 @@
 import logging
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAdminUser
 
@@ -10,6 +11,9 @@ from products.serializers import ProductSerializer
 logger = logging.getLogger("shop")
 
 
+@extend_schema_view(
+    get=extend_schema(auth=[]),
+)
 class ProductListCreateView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
 
@@ -31,6 +35,9 @@ class ProductListCreateView(generics.ListCreateAPIView):
         )
 
 
+@extend_schema_view(
+    get=extend_schema(auth=[]),
+)
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
 

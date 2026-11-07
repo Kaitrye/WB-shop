@@ -10,10 +10,17 @@ from balance.services import pay_for_order
 from orders.serializers import CreateOrderSerializer, OrderSerializer
 from orders.models import Order
 
+from drf_spectacular.utils import extend_schema
+
 
 class OrderListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=CreateOrderSerializer,
+        responses={201: OrderSerializer},
+        operation_id="order_create",
+    )
     def post(self, request):
         serializer = CreateOrderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -30,6 +37,10 @@ class OrderListCreateView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        responses={200: OrderSerializer(many=True)},
+        operation_id="order_list",
+    )
     def get(self, request):
         orders = (
             Order.objects.filter(user=request.user)
@@ -54,6 +65,11 @@ class OrderDetailView(generics.RetrieveAPIView):
 class OrderPaymentView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=None,
+        responses={200: OrderSerializer},
+        operation_id="order_pay",
+    )
     def post(self, request, pk):
         order = pay_for_order(user=request.user, order_id=pk)
         return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
