@@ -22,17 +22,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Установка PDM
-        run: pip install pdm==2.28.0
-
-      - name: Установка зависимостей линтера
-        run: pdm sync -G lint
+      - name: Установка Ruff
+        run: python -m pip install "ruff==0.17.4"
 
       - name: Проверка кода
-        run: pdm run ruff check .
+        run: ruff check .
 
       - name: Проверка форматирования
-        run: pdm run ruff format --check .
+        run: ruff format --check .
 
   test:
     runs-on: ubuntu-latest
