@@ -7,7 +7,6 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from products.models import Product
 from products.serializers import ProductSerializer
 
-
 logger = logging.getLogger("shop")
 
 

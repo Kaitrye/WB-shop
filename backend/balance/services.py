@@ -7,7 +7,6 @@ from rest_framework.exceptions import NotFound, ValidationError
 from balance.models import Balance, BalanceTransaction
 from orders.models import Order
 
-
 logger = logging.getLogger("shop")
 
 
@@ -68,7 +67,8 @@ def pay_for_order(*, user, order_id):
 
     if balance.amount < total_amount:
         logger.warning(
-            "event=order_payment_rejected user_id=%s order_id=%s reason=insufficient_balance",
+            "event=order_payment_rejected user_id=%s order_id=%s "
+            "reason=insufficient_balance",
             user.pk,
             order.pk,
         )

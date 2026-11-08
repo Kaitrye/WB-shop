@@ -1,10 +1,13 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 
 class Order(models.Model):
     class Status(models.TextChoices):
-        CREATED = "created", "Создан",
+        CREATED = (
+            "created",
+            "Создан",
+        )
         PAID = "paid", "Оплачен"
 
     user = models.ForeignKey(
@@ -22,7 +25,7 @@ class Order(models.Model):
 
     def __str__(self):
         return self.user.email
-    
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(

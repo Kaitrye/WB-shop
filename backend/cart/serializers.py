@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from cart.models import Cart, CartItem
-from products.serializers import ProductSerializer
 from products.models import Product
+from products.serializers import ProductSerializer
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -17,7 +17,11 @@ class CartItemSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "created_at", "updated_at",)
+        read_only_fields = (
+            "id",
+            "created_at",
+            "updated_at",
+        )
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -34,8 +38,8 @@ class CartSerializer(serializers.ModelSerializer):
 
 class AddCartItemSerializer(serializers.Serializer):
     product_id = serializers.PrimaryKeyRelatedField(
-        source="product", 
-        queryset = Product.objects.filter(is_active=True),
+        source="product",
+        queryset=Product.objects.filter(is_active=True),
     )
     quantity = serializers.IntegerField(min_value=1)
 
@@ -45,11 +49,9 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ("quantity",)    
+        fields = ("quantity",)
 
     def validate_quantity(self, value):
         if value > self.instance.product.stock:
-            raise serializers.ValidationError(
-                "Количество превышает остаток товара."
-            )
-        return value    
+            raise serializers.ValidationError("Количество превышает остаток товара.")
+        return value

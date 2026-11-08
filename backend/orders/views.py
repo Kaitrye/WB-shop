@@ -1,16 +1,13 @@
-from rest_framework import generics
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.response import Response
-
-
-from orders.services import create_order_from_cart
-from balance.services import pay_for_order
-from orders.serializers import CreateOrderSerializer, OrderSerializer
-from orders.models import Order
-
 from drf_spectacular.utils import extend_schema
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from balance.services import pay_for_order
+from orders.models import Order
+from orders.serializers import CreateOrderSerializer, OrderSerializer
+from orders.services import create_order_from_cart
 
 
 class OrderListCreateView(APIView):
@@ -33,7 +30,7 @@ class OrderListCreateView(APIView):
         response_serializer = OrderSerializer(order)
 
         return Response(
-            response_serializer.data, 
+            response_serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
@@ -56,9 +53,8 @@ class OrderDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return (
-            Order.objects.filter(user=self.request.user)
-            .prefetch_related("items__product")
+        return Order.objects.filter(user=self.request.user).prefetch_related(
+            "items__product"
         )
 
 

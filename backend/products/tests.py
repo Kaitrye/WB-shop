@@ -7,7 +7,6 @@ from rest_framework.test import APITestCase
 
 from products.models import Product
 
-
 User = get_user_model()
 
 
@@ -108,7 +107,6 @@ class ProductEndpointsTests(APITestCase):
             reverse("product-detail", kwargs={"pk": self.product.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-
 
     def test_regular_user_cannot_update_product(self):
         self.client.force_authenticate(user=self.user)

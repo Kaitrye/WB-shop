@@ -1,5 +1,6 @@
 import logging
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -13,9 +14,6 @@ from cart.serializers import (
     CartSerializer,
     UpdateCartItemSerializer,
 )
-
-from drf_spectacular.utils import extend_schema
-
 
 logger = logging.getLogger("shop")
 
@@ -42,7 +40,8 @@ class CartItemCreateView(APIView):
 
         if quantity > product.stock:
             logger.warning(
-                "event=cart_item_add_rejected user_id=%s product_id=%s reason=insufficient_stock",
+                "event=cart_item_add_rejected user_id=%s product_id=%s "
+                "reason=insufficient_stock",
                 request.user.pk,
                 product.pk,
             )
@@ -61,7 +60,8 @@ class CartItemCreateView(APIView):
 
             if new_quantity > product.stock:
                 logger.warning(
-                    "event=cart_item_add_rejected user_id=%s product_id=%s reason=insufficient_stock",
+                    "event=cart_item_add_rejected user_id=%s product_id=%s "
+                    "reason=insufficient_stock",
                     request.user.pk,
                     product.pk,
                 )
@@ -73,7 +73,8 @@ class CartItemCreateView(APIView):
             item.save(update_fields=["quantity", "updated_at"])
 
         logger.info(
-            "event=cart_item_added user_id=%s cart_item_id=%s product_id=%s quantity=%s",
+            "event=cart_item_added user_id=%s cart_item_id=%s "
+            "product_id=%s quantity=%s",
             request.user.pk,
             item.pk,
             product.pk,

@@ -19,10 +19,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = (
-            "id", 
+            "id",
             "product",
-            "product_name", 
-            "unit_price", 
+            "product_name",
+            "unit_price",
             "quantity",
             "created_at",
             "updated_at",

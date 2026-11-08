@@ -9,7 +9,6 @@ from cart.models import Cart, CartItem
 from orders.models import Order, OrderItem
 from products.models import Product
 
-
 User = get_user_model()
 
 
@@ -176,9 +175,7 @@ class OrderEndpointsTests(APITestCase):
             quantity=2,
         )
 
-        response = self.client.get(
-            reverse("order-detail", kwargs={"pk": order.pk})
-        )
+        response = self.client.get(reverse("order-detail", kwargs={"pk": order.pk}))
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(response.json()["id"], order.id)

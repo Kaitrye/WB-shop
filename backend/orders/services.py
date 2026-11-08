@@ -7,7 +7,6 @@ from cart.models import CartItem
 from orders.models import Order, OrderItem
 from products.models import Product
 
-
 logger = logging.getLogger("shop")
 
 
@@ -42,23 +41,21 @@ def create_order_from_cart(*, user, cart_item_ids):
 
         if not product.is_active:
             logger.warning(
-                "event=order_create_rejected user_id=%s product_id=%s reason=inactive_product",
+                "event=order_create_rejected user_id=%s product_id=%s "
+                "reason=inactive_product",
                 user.pk,
                 product.pk,
             )
-            raise ValidationError(
-                {"cart_item_ids": "В заказе есть неактивный товар."}
-            )
+            raise ValidationError({"cart_item_ids": "В заказе есть неактивный товар."})
 
         if item.quantity > product.stock:
             logger.warning(
-                "event=order_create_rejected user_id=%s product_id=%s reason=insufficient_stock",
+                "event=order_create_rejected user_id=%s product_id=%s "
+                "reason=insufficient_stock",
                 user.pk,
                 product.pk,
             )
-            raise ValidationError(
-                {"cart_item_ids": "Недостаточно товара на складе."}
-            )
+            raise ValidationError({"cart_item_ids": "Недостаточно товара на складе."})
 
     order = Order.objects.create(user=user)
     for item in cart_items:

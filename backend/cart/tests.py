@@ -8,7 +8,6 @@ from rest_framework.test import APITestCase
 from cart.models import Cart, CartItem
 from products.models import Product
 
-
 User = get_user_model()
 
 
@@ -81,7 +80,9 @@ class CartEndpointsTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertFalse(CartItem.objects.filter(product=self.inactive_product).exists())
+        self.assertFalse(
+            CartItem.objects.filter(product=self.inactive_product).exists()
+        )
 
     def test_add_item_rejects_quantity_above_stock(self):
         response = self.client.post(

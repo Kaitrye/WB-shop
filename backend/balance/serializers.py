@@ -1,7 +1,8 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 from balance.models import Balance, BalanceTransaction
-from decimal import Decimal
 
 
 class BalanceSerializer(serializers.ModelSerializer):

@@ -9,7 +9,6 @@ from balance.models import Balance, BalanceTransaction
 from orders.models import Order, OrderItem
 from products.models import Product
 
-
 User = get_user_model()
 
 

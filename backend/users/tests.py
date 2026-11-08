@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from django.contrib.auth import get_user_model
-from django.urls import reverse
 
 class HealthEndpointTests(TestCase):
     def test_health_returns_ok(self):
@@ -16,14 +16,14 @@ class HealthEndpointTests(TestCase):
 
 User = get_user_model()
 
+
 class AuthEndpointsTests(APITestCase):
     def setUp(self):
         self.password = "password_12345678910"
         self.user = User.objects.create_user(
-            email="alice@example.com", 
-            password=self.password
+            email="alice@example.com", password=self.password
         )
-    
+
     def test_register_creates_user(self):
         email = "mike@example.com"
 
@@ -44,11 +44,11 @@ class AuthEndpointsTests(APITestCase):
         response = self.client.post(
             reverse("login"),
             {"email": self.user.email, "password": self.password},
-            format="json", 
+            format="json",
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        
+
         token_pair = response.json()
 
         self.assertIn("refresh", token_pair)
@@ -58,32 +58,32 @@ class AuthEndpointsTests(APITestCase):
         refresh = self.client.post(
             reverse("login"),
             {"email": self.user.email, "password": self.password},
-            format="json", 
+            format="json",
         ).json()["refresh"]
 
         response = self.client.post(
             reverse("refresh"),
             {"refresh": refresh},
-            format="json", 
+            format="json",
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)       
+        self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertIn("access", response.json())
 
     def test_me_returns_current_user(self):
         access = self.client.post(
             reverse("login"),
             {"email": self.user.email, "password": self.password},
-            format="json", 
+            format="json",
         ).json()["access"]
 
         response = self.client.get(
             reverse("me"),
-            HTTP_AUTHORIZATION = f"Bearer {access}",
-            format="json", 
+            HTTP_AUTHORIZATION=f"Bearer {access}",
+            format="json",
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)       
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
         me = response.json()
 
@@ -121,5 +121,3 @@ class AuthEndpointsTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-
-

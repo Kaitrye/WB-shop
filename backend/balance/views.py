@@ -1,17 +1,12 @@
-from rest_framework import generics
+from drf_spectacular.utils import extend_schema
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.views import APIView
 
-from balance.serializers import (
-    BalanceSerializer, 
-    TopUpBalanceSerializer
-)
 from balance.models import Balance
+from balance.serializers import BalanceSerializer, TopUpBalanceSerializer
 from balance.services import top_up_balance
-
-from drf_spectacular.utils import extend_schema
 
 
 class BalanceView(generics.RetrieveAPIView):
@@ -36,11 +31,10 @@ class BalanceTopUpView(APIView):
         serializer.is_valid(raise_exception=True)
 
         balance = top_up_balance(
-            user=request.user,
-            amount=serializer.validated_data["amount"]
+            user=request.user, amount=serializer.validated_data["amount"]
         )
 
         return Response(
-            BalanceSerializer(balance).data, 
+            BalanceSerializer(balance).data,
             status=status.HTTP_200_OK,
         )
